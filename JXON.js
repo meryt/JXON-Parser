@@ -12,7 +12,8 @@ var JXON = (function()
 	  */
 	function JXONNode(parent)
 	{
-		this["#parent"] = parent;
+		// Do not add parent property; this creates a circular data structure
+		// this["#parent"] = parent;
 	}
 
 	JXONNode.prototype.toString = function()
@@ -246,6 +247,7 @@ var JXON = (function()
 	{
 		Node: JXONNode
 		, Parser: JXONParser
+		, parse: function(str) { return new JXONParser().parseXML(str); }
 	};
 	return module;
 
