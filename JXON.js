@@ -6,7 +6,7 @@
   */
 var JXON = (function()
 {
-	/** 
+	/**
 	  * Represents a single instance of an XMLNode in JXON format
 	  * @param {JXONNode} [parent] A parent node to this instance
 	  */
@@ -47,10 +47,10 @@ var JXON = (function()
 		  */
 		function convertValue(value)
 		{
-			if (/^\s*$/.test(value)) { return null; }  
-			if (/^(true|false)$/i.test(value)) { return value.toLowerCase() === "true"; }  
-			if (isFinite(value)) { return parseFloat(value); }  
-			if (isFinite(Date.parse(value))) { return new Date(value); } 
+			if (/^\s*$/.test(value)) { return null; }
+			if (/^(true|false)$/i.test(value)) { return value.toLowerCase() === "true"; }
+			if (isFinite(value)) { return parseFloat(value); }
+			if (isFinite(Date.parse(value))) { return new Date(value); }
 
 			return value;
 		}
@@ -170,6 +170,14 @@ var JXON = (function()
 			parser = new DOMParser();
 			xml_doc = parser.parseFromString(xml,"text/xml");
 		}
+		// Nashorn support for this guy
+		else if ("undefined" !=  typeof javax.xml.parsers.DocumentBuilderFactory)
+		{
+            var factory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+            this.documentBuilder = factory.newDocumentBuilder();
+            xml_doc = this.documentBuilder.parse(new org.xml.sax.InputSource(
+                    new java.io.StringReader(xml)));
+		}
 		else // Internet Explorer
 		{
 			xml_doc=new ActiveXObject("Microsoft.XMLDOM");
@@ -191,10 +199,10 @@ var JXON = (function()
 	/**
 	  * Loads an XML document and parses it.
 	  * @param {String} url The URL of the XML file to parse
-	  * @param {Function} callback The callback method to call when the file is loaded and parsed.  
-	  * The callback will receive 1 parameter which will either be an instance of Error 
+	  * @param {Function} callback The callback method to call when the file is loaded and parsed.
+	  * The callback will receive 1 parameter which will either be an instance of Error
 	  * in the case of an error or a generic object.
-	  * @returns {Object} The JavaScript Object representing the XML Node if callback is not specified.  If 
+	  * @returns {Object} The JavaScript Object representing the XML Node if callback is not specified.  If
 	  * callback is specified, this will return undefined.
 	  */
 	JXONParser.prototype.parseXMLFile = function(url, callback)
@@ -204,7 +212,7 @@ var JXON = (function()
 			xhr = new XMLHttpRequest();
 		else // IE 5/6
 			xhr = new ActiveXObject("Microsoft.XMLHTTP");
-			
+
 		var async = (callback instanceof Function);
 		xhr.open("GET", url, async);
 		if(async)
@@ -234,7 +242,7 @@ var JXON = (function()
 		}
 	}
 
-	var module = 
+	var module =
 	{
 		Node: JXONNode
 		, Parser: JXONParser
